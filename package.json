@@ -1,0 +1,99 @@
+{
+  "name": "run-configuration",
+  "displayName": "Run Configuration",
+  "description": "Run and save your scripts run config for future use. Without using terminal to run manually.",
+  "version": "0.0.2",
+  "author": {
+    "name": "Kalyan Jyoti Borah",
+    "url": "https://github.com/kalyan-velu"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kalyan-velu/run-configuration-extension.git"
+  },
+  "engines": {
+    "vscode": "^1.104.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "run-configuration.run",
+        "title": "Run Configuration: Run",
+        "icon": "$(play)"
+      },
+      {
+        "command": "run-configuration.select",
+        "title": "Run Configuration: Select"
+      },
+      {
+        "command": "run-configuration.manage",
+        "title": "Run Configuration: Manage"
+      }
+    ],
+    "configuration": {
+      "title": "Run Configuration",
+      "properties": {
+        "runConfiguration.configurations": {
+          "type": "array",
+          "default": [],
+          "description": "List of run configurations.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the configuration"
+              },
+              "command": {
+                "type": "string",
+                "description": "Command to execute"
+              },
+              "cwd": {
+                "type": "string",
+                "description": "Current working directory"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run package",
+    "compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "pnpm run check-types && pnpm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@types/vscode": "^1.104.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
+    "esbuild": "^0.27.1",
+    "eslint": "^9.39.1",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.48.1"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}
