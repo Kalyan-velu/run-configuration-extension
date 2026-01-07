@@ -83,7 +83,6 @@ export class ConfigEditorPanel {
   }
 
   private _getHtmlForWebview(webview: vscode.Webview, configs: any[]) {
-    // Simple HTML/JS for now. In a real app, maybe use React or Svelte bundled.
     return `<!DOCTYPE html>
 <html lang="en">
 <head>

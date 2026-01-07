@@ -4,20 +4,17 @@ import { ConfigurationManager, RunConfiguration } from './ConfigurationManager';
 import { PackageJsonCodeLensProvider } from './PackageJsonCodeLensProvider';
 import { StatusBarManager } from './StatusBarManager';
 import { TaskManager } from './TaskManager';
+import { workspaceState } from './utils/workspace-state';
 
 export function activate(context: vscode.ExtensionContext) {
-  console.log('Run Configuration extension is active');
-
+  workspaceState.init(context);
   const configManager = new ConfigurationManager();
   const statusBar = new StatusBarManager();
-  let selectedConfig: RunConfiguration | undefined;
 
-  // Load selection from workspaceState? (Enhancement for later)
-
-  const updateStatusBar = () => {
-    statusBar.update(selectedConfig ? selectedConfig.name : undefined);
+  const updateStatusBar = (config?: RunConfiguration | undefined) => {
+    statusBar.update(config ?? workspaceState.getSelectedConfig());
   };
-  updateStatusBar();
+  updateStatusBar(workspaceState.getSelectedConfig());
 
   // Command: Select Configuration
   const selectCommand = vscode.commands.registerCommand(
@@ -42,8 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
       });
 
       if (selected) {
-        selectedConfig = selected.config;
-        updateStatusBar();
+        updateStatusBar(selected.config);
       }
     }
   );
@@ -53,10 +49,10 @@ export function activate(context: vscode.ExtensionContext) {
     'run-configuration.run',
     (config?: RunConfiguration) => {
       if (config) {
-        selectedConfig = config;
-        updateStatusBar();
+        updateStatusBar(config);
       }
 
+      const selectedConfig = workspaceState.getSelectedConfig();
       if (!selectedConfig) {
         vscode.window.showWarningMessage('No configuration selected.');
         return;

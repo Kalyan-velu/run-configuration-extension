@@ -101,6 +101,24 @@
                 "group": "watch",
                 "reveal": "never"
             }
+        },
+        {
+            "type": "npm",
+            "script": "lint",
+            "label": "npm: lint",
+            "presentation": {
+                "group": "watch",
+                "reveal": "never"
+            }
+        },
+        {
+            "type": "npm",
+            "script": "package",
+            "label": "npm: package",
+            "presentation": {
+                "group": "watch",
+                "reveal": "never"
+            }
         }
     ]
 }

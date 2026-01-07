@@ -1,10 +1,11 @@
 import * as vscode from 'vscode';
+import type { RunConfiguration } from './ConfigurationManager';
 
 export class StatusBarManager {
   private runButton: vscode.StatusBarItem;
   private configSelector: vscode.StatusBarItem;
 
-  constructor() {
+  constructor(private ctx?: vscode.ExtensionContext) {
     this.runButton = vscode.window.createStatusBarItem(
       vscode.StatusBarAlignment.Left,
       100
@@ -20,17 +21,16 @@ export class StatusBarManager {
     this.configSelector.command = 'run-configuration.select';
     this.configSelector.tooltip = 'Select Run Configuration';
 
-    // Initial State
-    this.update('No Config');
+    this.update();
   }
 
-  public update(configName: string | undefined) {
-    if (configName) {
-      this.configSelector.text = `$(gear) ${configName}`;
+  public update(config?: RunConfiguration) {
+    if (config) {
+      this.configSelector.text = `$(gear) ${config.name}`;
       this.runButton.show();
       this.configSelector.show();
     } else {
-      this.configSelector.text = '$(gear) No Configuration';
+      this.configSelector.text = '$(gear) Select Script';
       this.runButton.hide(); // Hide run button if nothing selected
       this.configSelector.show();
     }

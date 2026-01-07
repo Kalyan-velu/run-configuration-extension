@@ -52,7 +52,7 @@ export class PackageJsonCodeLensProvider implements vscode.CodeLensProvider {
           const cwd = path.dirname(document.uri.fsPath); // Use fsPath for consistency
 
           const cmd: vscode.Command = {
-            title: 'Run Config', // Shorter title
+            title: 'Run',
             tooltip: `Create Run Configuration for 'npm run ${scriptName}'`,
             command: 'run-configuration.createFromScript',
             arguments: [scriptName, `npm run ${scriptName}`, cwd],
