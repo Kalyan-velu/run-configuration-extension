@@ -1,0 +1,55 @@
+name: CI
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+      - main
+  release:
+    types:
+      - created
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - run: pnpm install
+
+      - run: xvfb-run -a pnpm test
+        if: runner.os == 'Linux'
+
+      - run: pnpm test
+        if: runner.os != 'Linux'
+
+      - name: Package Extension
+        if: success() && startsWith(github.ref, 'refs/tags/') && matrix.os == 'ubuntu-latest'
+        run: pnpm exec vsce package -o run-configuration-${{ github.ref_name }}.vsix
+
+      - name: Upload Release Asset
+        if: success() && startsWith(github.ref, 'refs/tags/') && matrix.os == 'ubuntu-latest'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: run-configuration-${{ github.ref_name }}.vsix
+
+      - name: Publish
+        if: success() && startsWith(github.ref, 'refs/tags/') && matrix.os == 'ubuntu-latest'
+        run: pnpm run deploy
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
