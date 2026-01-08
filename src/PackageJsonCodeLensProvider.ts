@@ -1,5 +1,6 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { CREATE_FROM_COMMAND } from './utils/constants';
 
 export class PackageJsonCodeLensProvider implements vscode.CodeLensProvider {
   public provideCodeLenses(
@@ -54,7 +55,7 @@ export class PackageJsonCodeLensProvider implements vscode.CodeLensProvider {
           const cmd: vscode.Command = {
             title: 'Run',
             tooltip: `Create Run Configuration for 'npm run ${scriptName}'`,
-            command: 'run-configuration.createFromScript',
+            command: CREATE_FROM_COMMAND,
             arguments: [scriptName, `npm run ${scriptName}`, cwd],
           };
 
