@@ -4,12 +4,15 @@ import { ConfigurationManager, RunConfiguration } from './ConfigurationManager';
 import { PackageJsonCodeLensProvider } from './PackageJsonCodeLensProvider';
 import { StatusBarManager } from './StatusBarManager';
 import { TaskManager } from './TaskManager';
+import { RunCommands } from './utils/commands/run.command';
+import { CREATE_FROM_COMMAND, SELECT_CONFIG_COMMAND } from './utils/constants';
 import { workspaceState } from './utils/workspace-state';
 
 export function activate(context: vscode.ExtensionContext) {
   workspaceState.init(context);
   const configManager = new ConfigurationManager();
   const statusBar = new StatusBarManager();
+  const run = new RunCommands(context, statusBar).init();
 
   const updateStatusBar = (config?: RunConfiguration | undefined) => {
     statusBar.update(config ?? workspaceState.getSelectedConfig());
@@ -18,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Command: Select Configuration
   const selectCommand = vscode.commands.registerCommand(
-    'run-configuration.select',
+    SELECT_CONFIG_COMMAND,
     async () => {
       const configs = await configManager.getConfigurations();
       if (configs.length === 0) {
@@ -44,31 +47,6 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  // Command: Run Configuration
-  const runCommand = vscode.commands.registerCommand(
-    'run-configuration.run',
-    (config?: RunConfiguration) => {
-      if (config) {
-        updateStatusBar(config);
-      }
-
-      const selectedConfig = workspaceState.getSelectedConfig();
-      if (!selectedConfig) {
-        vscode.window.showWarningMessage('No configuration selected.');
-        return;
-      }
-
-      const terminal = vscode.window.createTerminal(
-        `Run: ${selectedConfig.name}`
-      );
-      terminal.show();
-      if (selectedConfig.cwd) {
-        terminal.sendText(`cd "${selectedConfig.cwd}"`);
-      }
-      terminal.sendText(selectedConfig.command);
-    }
-  );
-
   // Command: Manage Configurations (Placeholder for now, opens Webview later)
   const manageCommand = vscode.commands.registerCommand(
     'run-configuration.manage',
@@ -79,7 +57,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Command: Create from Script
   const createFromScriptCommand = vscode.commands.registerCommand(
-    'run-configuration.createFromScript',
+    CREATE_FROM_COMMAND,
     async (name: string, command: string, cwd: string) => {
       await configManager.addConfiguration({ name, command, cwd });
       // Also create a corresponding task entry in .vscode/tasks.json when possible
@@ -102,7 +80,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     selectCommand,
-    runCommand,
+    run,
     manageCommand,
     createFromScriptCommand,
     codeLensProvider,

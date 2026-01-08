@@ -1,7 +1,10 @@
 import * as vscode from 'vscode';
 import type { RunConfiguration } from './ConfigurationManager';
+import { RUN_CONFIG_COMMAND, SELECT_CONFIG_COMMAND } from './utils/constants';
+import { workspaceState } from './utils/workspace-state';
 
 export class StatusBarManager {
+  private state = workspaceState;
   private runButton: vscode.StatusBarItem;
   private configSelector: vscode.StatusBarItem;
 
@@ -10,7 +13,7 @@ export class StatusBarManager {
       vscode.StatusBarAlignment.Left,
       100
     );
-    this.runButton.command = 'run-configuration.run';
+    this.runButton.command = RUN_CONFIG_COMMAND;
     this.runButton.text = '$(play)';
     this.runButton.tooltip = 'Run Configuration';
 
@@ -18,10 +21,10 @@ export class StatusBarManager {
       vscode.StatusBarAlignment.Left,
       99
     );
-    this.configSelector.command = 'run-configuration.select';
+    this.configSelector.command = SELECT_CONFIG_COMMAND;
     this.configSelector.tooltip = 'Select Run Configuration';
 
-    this.update();
+    this.update(workspaceState.getSelectedConfig());
   }
 
   public update(config?: RunConfiguration) {
@@ -29,6 +32,7 @@ export class StatusBarManager {
       this.configSelector.text = `$(gear) ${config.name}`;
       this.runButton.show();
       this.configSelector.show();
+      this.state.changeSelectedConfig(config);
     } else {
       this.configSelector.text = '$(gear) Select Script';
       this.runButton.hide(); // Hide run button if nothing selected
