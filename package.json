@@ -2,7 +2,7 @@
   "name": "run-configuration",
   "displayName": "Run Configuration",
   "description": "Run and save your scripts run config for future use. Without using terminal to run manually.",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "publisher": "kalyanjyotiborah",
   "author": {
     "name": "Kalyan Jyoti Borah",
