@@ -28,7 +28,7 @@ export class WorkspaceState {
 
     this.currentConfigs = this.ctx.workspaceState.get<RunConfiguration[]>(
       WORKSPACE_KEY_CONTEXT,
-      []
+      [],
     );
 
     for (const config of this.currentConfigs) {
@@ -55,9 +55,7 @@ export class WorkspaceState {
       return this.currentConfigs;
     }
 
-    this.currentConfigs = this.currentConfigs.filter(
-      (value) => value.name !== configName
-    );
+    this.currentConfigs = this.currentConfigs.filter((value) => value.name !== configName);
 
     if (this.selectedConfig?.name === configName) {
       this.changeSelectedConfig(undefined);
