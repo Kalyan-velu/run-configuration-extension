@@ -9,14 +9,15 @@ export class StatusBarManager {
   private configSelector: vscode.StatusBarItem;
 
   constructor(private ctx?: vscode.ExtensionContext) {
+    // Run Button
     this.runButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
     this.runButton.command = RUN_CONFIG_COMMAND;
     this.runButton.text = '$(play)';
-    this.runButton.tooltip = 'Run Configuration';
-
+    this.runButton.tooltip = 'Run Task';
+    // Config Select Button
     this.configSelector = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 99);
     this.configSelector.command = SELECT_CONFIG_COMMAND;
-    this.configSelector.tooltip = 'Select Run Configuration';
+    this.configSelector.tooltip = 'Select Task';
 
     this.update(workspaceState.getSelectedConfig());
   }
@@ -33,7 +34,6 @@ export class StatusBarManager {
       this.configSelector.show();
     }
   }
-
   public dispose() {
     this.runButton.dispose();
     this.configSelector.dispose();

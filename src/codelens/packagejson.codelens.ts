@@ -1,11 +1,11 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { CREATE_FROM_COMMAND } from './utils/constants';
+import { CREATE_FROM_COMMAND } from '../utils/constants';
 
 export class PackageJsonCodeLensProvider implements vscode.CodeLensProvider {
   public provideCodeLenses(
     document: vscode.TextDocument,
-    token: vscode.CancellationToken
+    token: vscode.CancellationToken,
   ): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
     if (!document.fileName.endsWith('package.json')) {
       return [];

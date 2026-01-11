@@ -1,5 +1,5 @@
-import { commands, window, type ExtensionContext } from 'vscode';
-import { ConfigEditorPanel } from '../../ConfigEditorPanel';
+import { commands, Disposable, window, type ExtensionContext } from 'vscode';
+
 import type { ConfigurationManager, RunConfiguration } from '../../ConfigurationManager';
 import type { StatusBarManager } from '../../StatusBarManager';
 import TaskManager from '../../TaskManager';
@@ -12,13 +12,15 @@ import {
 import { workspaceState } from '../workspace-state';
 
 export class RunCommands {
+  private disposables: Disposable[] = [];
   private state = workspaceState;
   constructor(
     private ctx: ExtensionContext,
     private statusBarManager: StatusBarManager,
     private configManager: ConfigurationManager,
   ) {
-    this.ctx.subscriptions.push(...this.register(), statusBarManager);
+    this.disposables = this.register();
+    this.ctx.subscriptions.push(...this.disposables, statusBarManager);
   }
   private register() {
     return [
@@ -28,13 +30,16 @@ export class RunCommands {
       commands.registerCommand(CREATE_FROM_COMMAND, this.createFromScript),
     ];
   }
-
-  private handleRun = (config?: RunConfiguration) => {
-    let configToRun: RunConfiguration | undefined = config;
+  _dispose = () => {
+    if (this.disposables.length) {
+      return;
+    }
+    this.disposables.forEach((d) => d.dispose());
+  };
+  private handleRun = () => {
+    //
+    const configToRun: RunConfiguration | undefined = this.state.getSelectedConfig();
     if (configToRun) {
-      this.statusBarManager?.update(config);
-    } else if (this.state.getSelectedConfig()) {
-      configToRun = this.state.getSelectedConfig();
       this.statusBarManager?.update(this.state.getSelectedConfig());
     }
     if (!configToRun) {
@@ -71,7 +76,7 @@ export class RunCommands {
     }
   };
   private handleManage = async () => {
-    ConfigEditorPanel.createOrShow(this.ctx.extensionUri);
+    // ConfigEditorPanel.createOrShow(this.ctx.extensionUri);
   };
   private createFromScript = async (name: string, command: string, cwd: string) => {
     try {
